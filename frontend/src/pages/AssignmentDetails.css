@@ -1,0 +1,282 @@
+
+/* ========================================
+   ASSIGNMENT DETAILS PAGE
+======================================== */
+
+.assignment-details-page {
+    width: 100%;
+}
+
+
+/* ========================================
+   SUBMISSION SECTION
+======================================== */
+
+.assignment-submission-card {
+    margin-top: 24px;
+}
+
+.assignment-submission-content {
+    margin-top: 24px;
+}
+
+
+/* ========================================
+   UPLOAD AREA
+======================================== */
+
+.assignment-upload-box {
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 32px;
+    background: #f8fafc;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.assignment-upload-box:hover {
+    border-color: #2563eb;
+    background: #f8fbff;
+}
+
+.assignment-upload-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 16px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.assignment-upload-box h3 {
+    margin: 0 0 8px;
+    font-size: 19px;
+    color: #0f172a;
+}
+
+.assignment-upload-box p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+/* ========================================
+   FILE INPUT
+======================================== */
+
+.assignment-file-input {
+    margin-top: 22px;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.assignment-file-input:hover {
+    border-color: #2563eb;
+}
+
+
+/* ========================================
+   SELECTED FILE
+======================================== */
+
+.assignment-selected-file {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+.assignment-selected-file-icon {
+    font-size: 24px;
+}
+
+.assignment-selected-file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.assignment-selected-file-label {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 3px;
+}
+
+.assignment-selected-file-name {
+    display: block;
+    font-weight: 600;
+    color: #1e293b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+
+.assignment-submit-button {
+    margin-top: 20px;
+    border: none;
+    cursor: pointer;
+    min-width: 190px;
+}
+
+.assignment-submit-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+
+/* ========================================
+   SUCCESS / ERROR
+======================================== */
+
+.assignment-success-message {
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
+    font-weight: 600;
+}
+
+.assignment-error-message {
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    font-weight: 600;
+}
+
+
+/* ========================================
+   SUBMITTED STATE
+======================================== */
+
+.assignment-submitted-box {
+    padding: 26px;
+    border-radius: 16px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.assignment-submitted-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.assignment-submitted-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #dcfce7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #15803d;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.assignment-submitted-header h3 {
+    margin: 0;
+    color: #166534;
+    font-size: 18px;
+}
+
+.assignment-submitted-header p {
+    margin: 4px 0 0;
+    color: #4b7a5b;
+    font-size: 14px;
+}
+
+.assignment-submitted-file {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px;
+    background: white;
+    border: 1px solid #dcfce7;
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.assignment-submitted-file-icon {
+    font-size: 25px;
+}
+
+.assignment-submitted-file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.assignment-submitted-file-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.assignment-submitted-file-name {
+    display: block;
+    color: #1e293b;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.assignment-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+
+    .assignment-upload-box {
+        padding: 24px 18px;
+    }
+
+    .assignment-submitted-box {
+        padding: 20px;
+    }
+
+    .assignment-selected-file,
+    .assignment-submitted-file {
+        align-items: flex-start;
+    }
+
+    .assignment-submit-button {
+        width: 100%;
+    }
+
+}
+
