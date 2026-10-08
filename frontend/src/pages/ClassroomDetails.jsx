@@ -11,6 +11,7 @@ function ClassroomDetails() {
     const [error, setError] = useState('')
 
     const role = localStorage.getItem('role')
+    const userId = localStorage.getItem('userId')
 
     useEffect(() => {
         loadClassroom()
@@ -58,6 +59,136 @@ function ClassroomDetails() {
             console.log(
                 'Error loading assignments:',
                 error
+            )
+        }
+    }
+
+    // ================================
+    // DELETE CLASSROOM
+    // ================================
+
+    async function deleteClassroom() {
+
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this classroom? This will remove the classroom and its classroom data.'
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        try {
+
+            const response = await fetch(
+                `http://localhost:5000/api/classrooms/${id}`,
+                {
+                    method: 'DELETE',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        teacherId: userId
+                    })
+                }
+            )
+
+            const data =
+                await response.json()
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    'Unable to delete classroom.'
+                )
+
+                return
+            }
+
+            alert(
+                'Classroom deleted successfully.'
+            )
+
+            window.location.href =
+                '/classrooms'
+
+        } catch (error) {
+
+            console.log(
+                'Delete classroom error:',
+                error
+            )
+
+            alert(
+                'Unable to connect to the backend.'
+            )
+        }
+    }
+
+    // ================================
+    // LEAVE CLASSROOM
+    // ================================
+
+    async function leaveClassroom() {
+
+        const confirmed = window.confirm(
+            'Are you sure you want to leave this classroom?'
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        try {
+
+            const response = await fetch(
+                `http://localhost:5000/api/classrooms/${id}/leave`,
+                {
+                    method: 'DELETE',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        studentId: userId
+                    })
+                }
+            )
+
+            const data =
+                await response.json()
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    'Unable to leave classroom.'
+                )
+
+                return
+            }
+
+            alert(
+                'You have left the classroom successfully.'
+            )
+
+            window.location.href =
+                '/student-classrooms'
+
+        } catch (error) {
+
+            console.log(
+                'Leave classroom error:',
+                error
+            )
+
+            alert(
+                'Unable to connect to the backend.'
             )
         }
     }
@@ -464,6 +595,59 @@ function ClassroomDetails() {
                     </div>
 
                 </section>
+
+                {/* ================================
+                    CLASSROOM ACTION
+                ================================ */}
+
+                <div
+                    style={{
+                        marginTop: '30px',
+                        display: 'flex',
+                        gap: '12px',
+                        flexWrap: 'wrap'
+                    }}
+                >
+
+                    {role === 'teacher' ? (
+
+                        <button
+                            onClick={deleteClassroom}
+                            style={{
+                                padding: '12px 20px',
+                                border: 'none',
+                                borderRadius: '8px',
+                                background: '#dc2626',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '600'
+                            }}
+                        >
+                            🗑️ Delete Classroom
+                        </button>
+
+                    ) : (
+
+                        <button
+                            onClick={leaveClassroom}
+                            style={{
+                                padding: '12px 20px',
+                                border: 'none',
+                                borderRadius: '8px',
+                                background: '#dc2626',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '600'
+                            }}
+                        >
+                            🚪 Leave Classroom
+                        </button>
+
+                    )}
+
+                </div>
 
                 <Link
                     to={

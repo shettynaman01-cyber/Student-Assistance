@@ -1687,6 +1687,353 @@ app.get(
 
 
 // ================================
+// DELETE CLASSROOM (TEACHER)
+// ================================
+
+app.delete('/api/classrooms/:id', (req, res) => {
+
+  const classroomId = req.params.id
+  const { teacherId } = req.body
+
+  if (!teacherId) {
+    return res.status(400).json({
+      message: 'Teacher ID is required.'
+    })
+  }
+
+  // Check that the user is a teacher
+  const verifyTeacherSql = `
+        SELECT id, role
+        FROM users
+        WHERE id = ?
+    `
+
+  db.query(
+    verifyTeacherSql,
+    [teacherId],
+    (error, results) => {
+
+      if (error) {
+        console.log(
+          'Teacher verification failed:',
+          error.message
+        )
+
+        return res.status(500).json({
+          message: 'Unable to verify teacher.'
+        })
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({
+          message: 'Teacher account not found.'
+        })
+      }
+
+      if (results[0].role !== 'teacher') {
+        return res.status(403).json({
+          message: 'Only teachers can delete classrooms.'
+        })
+      }
+
+      // Check that this teacher owns the classroom
+      const verifyClassroomSql = `
+                SELECT id
+                FROM classrooms
+                WHERE id = ?
+                AND teacher_id = ?
+            `
+
+      db.query(
+        verifyClassroomSql,
+        [classroomId, teacherId],
+        (error, classroomResults) => {
+
+          if (error) {
+            console.log(
+              'Classroom verification failed:',
+              error.message
+            )
+
+            return res.status(500).json({
+              message: 'Unable to verify classroom.'
+            })
+          }
+
+          if (classroomResults.length === 0) {
+            return res.status(403).json({
+              message:
+                'You can only delete your own classroom.'
+            })
+          }
+
+          // Delete classroom members
+          const deleteMembersSql = `
+                        DELETE FROM classroom_members
+                        WHERE classroom_id = ?
+                    `
+
+          db.query(
+            deleteMembersSql,
+            [classroomId],
+            (error) => {
+
+              if (error) {
+                console.log(
+                  'Unable to delete classroom members:',
+                  error.message
+                )
+
+                return res.status(500).json({
+                  message:
+                    'Unable to delete classroom.'
+                })
+              }
+
+              // Delete assignments
+              const deleteAssignmentsSql = `
+                                DELETE FROM assignments
+                                WHERE classroom_id = ?
+                            `
+
+              db.query(
+                deleteAssignmentsSql,
+                [classroomId],
+                (error) => {
+
+                  if (error) {
+                    console.log(
+                      'Unable to delete classroom assignments:',
+                      error.message
+                    )
+
+                    return res.status(500).json({
+                      message:
+                        'Unable to delete classroom.'
+                    })
+                  }
+
+                  // Delete notes
+                  const deleteNotesSql = `
+                                        DELETE FROM notes
+                                        WHERE classroom_id = ?
+                                    `
+
+                  db.query(
+                    deleteNotesSql,
+                    [classroomId],
+                    (error) => {
+
+                      if (error) {
+                        console.log(
+                          'Unable to delete classroom notes:',
+                          error.message
+                        )
+
+                        return res.status(500).json({
+                          message:
+                            'Unable to delete classroom.'
+                        })
+                      }
+
+                      // Delete conversations
+                      const deleteConversationsSql = `
+                                                DELETE FROM conversations
+                                                WHERE classroom_id = ?
+                                            `
+
+                      db.query(
+                        deleteConversationsSql,
+                        [classroomId],
+                        (error) => {
+
+                          if (error) {
+                            console.log(
+                              'Unable to delete classroom conversations:',
+                              error.message
+                            )
+
+                            return res.status(500).json({
+                              message:
+                                'Unable to delete classroom.'
+                            })
+                          }
+
+                          // Finally delete classroom
+                          const deleteClassroomSql = `
+                                                        DELETE FROM classrooms
+                                                        WHERE id = ?
+                                                        AND teacher_id = ?
+                                                    `
+
+                          db.query(
+                            deleteClassroomSql,
+                            [
+                              classroomId,
+                              teacherId
+                            ],
+                            (error, result) => {
+
+                              if (error) {
+                                console.log(
+                                  'Unable to delete classroom:',
+                                  error.message
+                                )
+
+                                return res.status(500).json({
+                                  message:
+                                    'Unable to delete classroom.'
+                                })
+                              }
+
+                              if (
+                                result.affectedRows === 0
+                              ) {
+                                return res.status(404).json({
+                                  message:
+                                    'Classroom not found.'
+                                })
+                              }
+
+                              res.json({
+                                message:
+                                  'Classroom deleted successfully.'
+                              })
+                            }
+                          )
+                        }
+                      )
+                    }
+                  )
+                }
+              )
+            }
+          )
+        }
+      )
+    }
+  )
+})
+
+
+// ================================
+// LEAVE CLASSROOM (STUDENT)
+// ================================
+
+app.delete(
+  '/api/classrooms/:id/leave',
+  (req, res) => {
+
+    const classroomId =
+      req.params.id
+
+    const { studentId } =
+      req.body
+
+    if (!studentId) {
+
+      return res.status(400).json({
+        message:
+          'Student ID is required.'
+      })
+    }
+
+    // Check that the user is a student
+    const verifyStudentSql = `
+      SELECT
+        id,
+        role
+      FROM users
+      WHERE id = ?
+    `
+
+    db.query(
+      verifyStudentSql,
+      [studentId],
+      (error, results) => {
+
+        if (error) {
+
+          console.log(
+            'Student verification failed:',
+            error.message
+          )
+
+          return res.status(500).json({
+            message:
+              'Unable to verify student.'
+          })
+        }
+
+        if (results.length === 0) {
+
+          return res.status(404).json({
+            message:
+              'Student account not found.'
+          })
+        }
+
+        if (
+          results[0].role !== 'student'
+        ) {
+
+          return res.status(403).json({
+            message:
+              'Only students can leave classrooms.'
+          })
+        }
+
+        // Remove the student from the classroom
+        const leaveClassroomSql = `
+          DELETE FROM classroom_members
+          WHERE classroom_id = ?
+            AND student_id = ?
+        `
+
+        db.query(
+          leaveClassroomSql,
+          [
+            classroomId,
+            studentId
+          ],
+          (error, result) => {
+
+            if (error) {
+
+              console.log(
+                'Unable to leave classroom:',
+                error.message
+              )
+
+              return res.status(500).json({
+                message:
+                  'Unable to leave classroom.'
+              })
+            }
+
+            if (
+              result.affectedRows === 0
+            ) {
+
+              return res.status(404).json({
+                message:
+                  'You are not a member of this classroom.'
+              })
+            }
+
+            res.json({
+              message:
+                'You have left the classroom successfully.'
+            })
+          }
+        )
+      }
+    )
+  }
+)
+
+
+// ================================
 // GET CLASSROOM ASSIGNMENTS
 // ================================
 
@@ -2539,9 +2886,9 @@ app.post(
 
           if (
             String(senderId) !==
-              String(conversation.student_id) &&
+            String(conversation.student_id) &&
             String(senderId) !==
-              String(conversation.teacher_id)
+            String(conversation.teacher_id)
           ) {
 
             return res.status(403).json({
@@ -2718,7 +3065,7 @@ app.use(
     if (
       error &&
       error.message ===
-        'Only PDF files are allowed.'
+      'Only PDF files are allowed.'
     ) {
 
       return res.status(400).json({
